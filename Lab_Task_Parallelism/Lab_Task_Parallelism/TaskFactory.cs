@@ -60,7 +60,7 @@ namespace Lab_Task_Parallelism
                   }, TaskCreationOptions.AttachedToParent);
                  Console.WriteLine("in maintask");
              });
-            task.Wait();
+            task.Wait();  //要等到子 task 都執行完，父 task 才算是執行完畢
             Console.WriteLine("out of maintask");
         }
 
@@ -198,6 +198,40 @@ namespace Lab_Task_Parallelism
             await Task.Delay(3000);
             int answer = 2 * 3;
             return answer;
+        }
+
+        public void StillReadInLockMode()
+        {
+            decimal temp = 0;
+            object locker = new object();
+            var t1 = Task.Run(() =>
+             {
+                 lock (locker)
+                 {
+                     for (int i = 0; i < 10000001; i++)
+                     {
+
+                         temp += i;
+                     }
+                     //temp = i;
+                 }
+                 Console.WriteLine($"by t1 {temp}");
+             });
+            var t2 = Task.Run(() =>
+             {
+                 Interlocked.
+                 //Task.Delay(1000);
+                 //for (int i = 1000000; i > 1; i--)
+                 //{
+
+                 //    lock (locker)
+                 //    {
+                 //        temp = i;
+                 //    }
+                 //}
+                 Console.WriteLine(temp);
+
+             });
         }
     }
 }
